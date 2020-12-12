@@ -207,10 +207,12 @@ class CPU:
             self.flag = 0b00000010 #If registerA is greater than registerB, set the Greater-than `G` flag to 1
         else:
             self.flag = 0b00000001# otherwise set it to 0.
+    
     def jeq(self):
         if self.flag == 0b00000001:#If `equal` flag is set (true), jump to the address stored in the given register.
             self.jmp()
         else:
             self.pc += self.instruction_size
         
-        
+    def jmp(self):#Jump to the address stored in the given register.Set the `PC` to the address stored in the given register.
+        self.pc = self.reg[self.operand_a]
