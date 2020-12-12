@@ -166,3 +166,36 @@ class CPU:
                 
     def hlt(self):
         self.halted = True
+        
+    def ldi(self):
+        self.reg[self.operand_a] = self.operand_b
+        
+    def prn(self):
+        print(self.reg[self.operand_a])
+        
+    def mul(self):
+        self.reg[self.operand_a] *= self.reg[self.operand_b]
+        
+     def push(self, reg_num, b=None):
+        self.sp -= 1
+        self.mdr = self.reg[reg_num]
+        self.ram_write(self.sp, self.mdr)
+
+    def pop(self, dest_reg_num, b=None):
+        self.mdr = self.ram_read(self.sp)
+        self.reg[dest_reg_num] = self.mdr
+        self.sp += 1
+
+    def call(self, dest_reg_num, b=None):
+        self.sp -=1
+        self.ram_write(self.sp, self.pc + self.instruction_size())
+        self.pc = self.reg[dest_reg_num]
+        
+     def ret(self, a=None, b=None):
+        self.mdr = self.ram_read(self.sp)
+        self.pc = self.mdr
+        self.sp += 1
+
+    def add(self):
+        self.reg[self.operand_a] += self.reg[self.operand_b]
+        
