@@ -21,8 +21,64 @@ JEQ = 0b01010101
 JNE = 0b01010110
 
 class CPU:
-    """ Main CPU class."""
-    
+    """Main CPU class."""
+
     def __init__(self):
-        """ Construct a new CPU."""
+        """Construct a new CPU."""
         self.ram = [0] * 256 # 256 ram can only be as 0-355
+        self. pc = 0 #program counter
+        self.reg = [0] * 8 # 8 bit regester
+        self.mar = 0 #memory address register memory address to read or write
+        self.mdr = 0 #memory data register holds the value to write or read
+        self.flag = 0 #flag register hold flag status
+        self.halted = False
+        self.running = True
+
+        # SPpoints at the value at the top of the stack (most recently pushed), or at address F4 ifempty.
+        self.reg[7] = 0xF4  # 244 # int('F4', 16)
+        self.ir = 0
+        # Setup Branch Table
+        self.branchtable = {}
+        self.branchtable[HLT] = self.hlt
+        self.branchtable[LDI] = self.ldi
+        self.branchtable[PRN] = self.prn
+        self.branchtable[MUL] = self.mul
+        self.branchtable[PUSH] = self.push
+        self.branchtable[POP] = self.pop
+        self.branchtable[CALL] = self.call
+        self.branchtable[ADD] = self.add
+        self.branchtable[RET] = self.ret
+        self.branchtable[JMP] = self.jmp
+        self.branchtable[CMP] = self.cmp
+        self.branchtable[JEQ] = self.jeq
+        self.branchtable[JNE] = self.jne
+
+        # Property wrapper
+        
+    @property
+    def sp(self):
+        return self.reg[7]
+
+    @sp.setter
+    def sp(self, a):
+        self.reg[7] = a & 0xFF
+
+
+
+    @property
+    def operand_a(self):
+        return self.ram_read(self.pc + 1)
+
+    @property
+    def operand_b(self):
+        return self.ram_read(self.pc + 2)
+
+    @property
+    def instruction_size(self):
+        return ((self.ir >> 6) & 0b11) + 1
+
+    @property
+    def instruction_sets_pc(self):
+        return ((self.ir >> 4) & 0b0001) == 1
+    
+    
