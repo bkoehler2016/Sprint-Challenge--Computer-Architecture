@@ -82,3 +82,16 @@ class CPU:
         return ((self.ir >> 4) & 0b0001) == 1
     
     
+    
+    def ram_read(self, mar):
+        if mar >= 0 and mar < len(self.ram):
+            return self.ram[mar]
+        else:
+          print(f"Error:{mar}")
+          return -1
+      
+    def ram_write(self, mar, mdr):
+        if mar >= 0 and mar < len(self.ram):
+            self.ram[mar] = mdr & 0xFF
+        else:
+            print(f"Error:{mdr}")
