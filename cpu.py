@@ -54,7 +54,7 @@ class CPU:
         self.branchtable[JNE] = self.jne
 
         # Property wrapper
-        
+
     @property
     def sp(self):
         return self.reg[7]
@@ -80,22 +80,22 @@ class CPU:
     @property
     def instruction_sets_pc(self):
         return ((self.ir >> 4) & 0b0001) == 1
-    
-    
-    
+
+
+
     def ram_read(self, mar):
         if mar >= 0 and mar < len(self.ram):
             return self.ram[mar]
         else:
-          print(f"Error:{mar}")
-          return -1
-      
+            print(f"Error:{mar}")
+            return -1
+
     def ram_write(self, mar, mdr):
         if mar >= 0 and mar < len(self.ram):
             self.ram[mar] = mdr & 0xFF
         else:
             print(f"Error:{mdr}")
-            
+
     def load(self, file_name):
         """Load a program into memory."""
 
@@ -115,7 +115,8 @@ class CPU:
         except:
             print(f'Could not find file named: {file_name}')
             sys.exit(1)
-            
+
+
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
 
@@ -124,7 +125,7 @@ class CPU:
         #elif op == "SUB": etc
         else:
             raise Exception("Unsupported ALU operation")
-        
+
     def trace(self):
         """
         Handy function to print out the CPU state. You might want to call this
@@ -144,7 +145,7 @@ class CPU:
             print(" %02X" % self.reg[i], end='')
 
         print()
-        
+
     def run(self):
         """Run the CPU."""
 
@@ -163,20 +164,20 @@ class CPU:
             # add ti counter if necessary
             if not self.instruction_sets_pc:
                 self.pc += self.instruction_size
-                
-    def hlt(self):
+
+    def hlt (self):
         self.halted = True
-        
-    def ldi(self):
+
+    def ldi (self):
         self.reg[self.operand_a] = self.operand_b
-        
-    def prn(self):
+
+    def prn(self ):
         print(self.reg[self.operand_a])
-        
+
     def mul(self):
         self.reg[self.operand_a] *= self.reg[self.operand_b]
-        
-     def push(self, reg_num, b=None):
+
+    def push(self, reg_num, b=None):
         self.sp -= 1
         self.mdr = self.reg[reg_num]
         self.ram_write(self.sp, self.mdr)
@@ -188,17 +189,17 @@ class CPU:
 
     def call(self, dest_reg_num, b=None):
         self.sp -=1
-        self.ram_write(self.sp, self.pc + self.instruction_size())
+        self.ram_write(self.sp, self.pc + self.sp.instruction_size())
         self.pc = self.reg[dest_reg_num]
-        
-     def ret(self, a=None, b=None):
+
+    def ret(self, a=None, b=None):
         self.mdr = self.ram_read(self.sp)
         self.pc = self.mdr
         self.sp += 1
 
     def add(self):
         self.reg[self.operand_a] += self.reg[self.operand_b]
-        
+
     def cmp(self):
         if self.reg[self.operand_a] < self.reg[self.operand_b]:
             self.flag = 0b00000100 # If registerA is less than registerB, set the Less-than `L` flag to 1
@@ -207,12 +208,17 @@ class CPU:
             self.flag = 0b00000010 #If registerA is greater than registerB, set the Greater-than `G` flag to 1
         else:
             self.flag = 0b00000001# otherwise set it to 0.
-    
     def jeq(self):
         if self.flag == 0b00000001:#If `equal` flag is set (true), jump to the address stored in the given register.
             self.jmp()
         else:
             self.pc += self.instruction_size
-        
+
     def jmp(self):#Jump to the address stored in the given register.Set the `PC` to the address stored in the given register.
         self.pc = self.reg[self.operand_a]
+
+    def jne(self):#If `E` flag is clear (false, 0), jump to the address stored in the given register.
+        if self .flag != 0b00000001:
+            self.jmp()
+        else:
+            self.pc += self.instruction_size
