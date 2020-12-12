@@ -97,16 +97,16 @@ class CPU:
             print(f"Error:{mdr}")
             
     def load(self, file_name):
-        """ Load a program into memory"""
-        
+        """Load a program into memory."""
+
         address = 0
-        
-        file_name = os.path.join(os.path.dirname(__file__), file_name)
+
+        file_path = os.path.join(os.path.dirname(__file__), file_name)
         try:
             with open(file_path) as f:
                 for line in f:
-                    num = line.split("#")[0].strip() # "10000010"
-                     try:
+                    num = line.split("#")[0].strip()  # "10000010"
+                    try:
                         instruction = int(num, 2)
                         self.ram[address] = instruction
                         address += 1
@@ -115,3 +115,32 @@ class CPU:
         except:
             print(f'Could not find file named: {file_name}')
             sys.exit(1)
+            
+    def alu(self, op, reg_a, reg_b):
+        """ALU operations."""
+
+        if op == "ADD":
+            self.reg[reg_a] += self.reg[reg_b]
+        #elif op == "SUB": etc
+        else:
+            raise Exception("Unsupported ALU operation")
+        
+    def trace(self):
+        """
+        Handy function to print out the CPU state. You might want to call this
+        from run() if you need help debugging.
+        """
+
+        print(f"TRACE: %02X | %02X %02X %02X |" % (
+            self.pc,
+            #self.fl,
+            #self.ie,
+            self.ram_read(self.pc),
+            self.ram_read(self.pc + 1),
+            self.ram_read(self.pc + 2)
+        ), end='')
+
+        for i in range(8):
+            print(" %02X" % self.reg[i], end='')
+
+        print()
