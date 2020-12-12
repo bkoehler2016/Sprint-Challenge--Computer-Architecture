@@ -199,3 +199,12 @@ class CPU:
     def add(self):
         self.reg[self.operand_a] += self.reg[self.operand_b]
         
+    def cmp(self):
+        if self.reg[self.operand_a] < self.reg[self.operand_b]:
+            self.flag = 0b00000100 # If registerA is less than registerB, set the Less-than `L` flag to 1
+
+        elif self.reg[self.operand_a] > self.reg[self.operand_b]:
+            self.flag = 0b00000010 #If registerA is greater than registerB, set the Greater-than `G` flag to 1
+        else:
+            self.flag = 0b00000001# otherwise set it to 0.
+        
