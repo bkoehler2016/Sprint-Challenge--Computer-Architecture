@@ -144,3 +144,25 @@ class CPU:
             print(" %02X" % self.reg[i], end='')
 
         print()
+        
+    def run(self):
+        """Run the CPU."""
+
+
+        while not self.halted:
+            #the next instruction
+            self.ir = self.ram_read(self.pc)
+
+            # does the instruction
+            if self.ir in self.branchtable:
+                self.branchtable[self.ir]()
+            else:
+                print(f"Error: not in {self.ir} in branch table.")
+                sys.exit(1)
+
+            # add ti counter if necessary
+            if not self.instruction_sets_pc:
+                self.pc += self.instruction_size
+                
+    def hlt(self):
+        self.halted = True
