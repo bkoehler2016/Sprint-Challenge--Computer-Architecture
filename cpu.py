@@ -95,3 +95,23 @@ class CPU:
             self.ram[mar] = mdr & 0xFF
         else:
             print(f"Error:{mdr}")
+            
+    def load(self, file_name):
+        """ Load a program into memory"""
+        
+        address = 0
+        
+        file_name = os.path.join(os.path.dirname(__file__), file_name)
+        try:
+            with open(file_path) as f:
+                for line in f:
+                    num = line.split("#")[0].strip() # "10000010"
+                     try:
+                        instruction = int(num, 2)
+                        self.ram[address] = instruction
+                        address += 1
+                    except:
+                        continue
+        except:
+            print(f'Could not find file named: {file_name}')
+            sys.exit(1)
